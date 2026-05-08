@@ -20,7 +20,7 @@ O projeto utiliza arquitetura modular com Python, LangChain e integração com L
 
 ---
 
-# Tecnologias Utilizadas
+# Tecnologias
 
 * Python
 * LangChain
