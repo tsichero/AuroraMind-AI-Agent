@@ -68,19 +68,75 @@ AuroraMind-AI-Agent/
 
 ---
 
-# Exemplo Inicial de Código
+# Código Inicial do Agente
+
+## app/main.py
 
 ```python
-from langchain.chat_models import ChatOpenAI
-from langchain.chains import ConversationChain
+from fastapi import FastAPI
+from app.agent import run_agent
 
-llm = ChatOpenAI(temperature=0.7)
+app = FastAPI()
 
-conversation = ConversationChain(llm=llm)
+@app.get("/")
+def home():
+    return {"message": "AuroraMind AI Agent online 🚀"}
 
-response = conversation.predict(input="Olá, quem é você?")
+@app.post("/chat")
+def chat(user_input: str):
+    response = run_agent(user_input)
+    return {"response": response}
+```
 
-print(response)
+---
+
+## app/agent.py
+
+```python
+from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+llm = ChatOpenAI(
+    model="gpt-4o-mini",
+    temperature=0.7,
+    api_key=os.getenv("OPENAI_API_KEY")
+)
+
+prompt = ChatPromptTemplate.from_template(
+    "Você é AuroraMind, uma IA inteligente e útil. Responda: {input}"
+)
+
+chain = prompt | llm
+
+
+def run_agent(user_input):
+    response = chain.invoke({"input": user_input})
+    return response.content
+```
+
+---
+
+## app/config.py
+
+```python
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+```
+
+---
+
+## .env
+
+```env
+OPENAI_API_KEY=sua_chave_aqui
 ```
 
 ---
@@ -120,3 +176,4 @@ LinkedIn:
 
 GitHub:
 [https://github.com/tsichero](https://github.com/tsichero)
+
